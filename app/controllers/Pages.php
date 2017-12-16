@@ -9,7 +9,7 @@ class Pages extends Controller {
 	}
 
 	public function index() {
-		$data['title'] = 'Welcome to PHP 7 Framework';
+		$data['title'] = 'Welcome to PHPMVC Framework';
 		$this->view('pages/index', $data);
 	}
 }
