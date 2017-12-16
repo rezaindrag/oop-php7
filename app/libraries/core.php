@@ -18,18 +18,36 @@ class Core {
 	public function __construct() {
 		$url = $this->getUrl();
 
-		# Set Current Controller
-		// 1. set first value of url become controller as a string
+		// Set controller
 		if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
-			// if exist, set current controller as a string
 			$this->currentController = ucwords($url[0]);
-			// unset index 0
 			unset($url[0]);
 		}
-		// 2. require file controller from folder controllers
 		require_once '../app/controllers/' . $this->currentController . '.php'; 
-		// 3. instantiate controller, set current controller as a object
 		$this->currentController = new $this->currentController;
+
+		// Set method
+		if (isset($url[1])) {
+			if (method_exists($this->currentController, $url[1])) {
+				$this->currentMethod = $url[1];
+				unset($url[1]);
+			}
+		}
+
+		// Set params
+		$this->params = $url ? array_values($url) : [];
+
+		// Call a callback with an array of parameters
+		call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
+		/*
+			Example:
+			- call_user_func_array(['Blog', 'Category'], ['Reza', 'Indra']);
+			- class Blog {
+				function Category($fName, $lName) {
+					echo $fName . ' ' . $lName; // Output: "Reza Indra"
+				}
+			  }
+		*/
 	}
 
 	/**
@@ -39,11 +57,8 @@ class Core {
 	 */
 	public function getUrl() {
 		if (isset($_GET['url'])) {
-			// get value of url and remove '/' at the end
 			$url = rtrim($_GET['url'], '/');
-			// filter url, if not url, it will show error
 			$url = filter_var($url, FILTER_SANITIZE_URL);
-			// explode str to array
 			$url = explode('/', $url);
 
 			return $url;
