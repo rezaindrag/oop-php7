@@ -1,2 +1,2 @@
-# oop-php7
-learn oop in php 7
+# PHPMVC
+PHPMVC is simple and light PHP 7 framework
